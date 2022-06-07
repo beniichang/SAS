@@ -6,29 +6,39 @@ proc import datafile='/home/u1264517/general/auto.xlsx'
 	getnames=yes;
 run;
 
-/* save the temporary file as a permanent file  */
-libname out '/home/u1264517/out';
-data out.auto; set auto; run;
 
+/*	csv, comma separated files. The following is one example
+	Acura,MDX,SUV,Asia,All,"$36,945 ","$33,337 ",3.5,6,265,17,23,4451,106,189
+*/
 
-/* output data into an excel file */
-proc export 
-	data=auto 
-	outfile='/home/u1264517/general/auto_2.xlsx' 
-	dbms = xlsx 
+* 1. import as dbms csv, getnames = no;
+proc import datafile="/home/u1264517/general/cars.csv" 
+	out=cars
+	dbms=csv 
 	replace;
+    getnames=no; *note this getnames = no statement;
 run;
 
-
-/* check data */
-proc contents data=out.auto; run;
-/* show variables in order */
-proc contents data=out.auto varnum; run;
-
-
-* check all data in one folder;
-proc datasets lib=out;
-	contents;
+* 2. import as csv, getnames = yes;
+proc import datafile="/home/u1264517/general/cars.csv" 
+	out=cars
+	dbms=csv
+	replace;
+    getnames=yes; 
 run;
 
+* 3. import as csv, getnames = yes, no replace, import will be cancelled;
+proc import datafile="/home/u1264517/general/cars.csv" 
+	out=cars
+	dbms=csv;
+    getnames=yes; 
+run;
 
+* 4. import as dlm;
+proc import datafile="/home/u1264517/general/cars.csv" 
+	out=cars
+	dbms=dlm 
+	replace;
+	delimiter=",";
+    getnames=yes; 
+run;
